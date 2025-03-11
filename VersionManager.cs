@@ -4,22 +4,23 @@ public class VersionManager
 {
     public class PatchInfo
     {
-        public string Name { get; set; }
-        public string Directory { get; set; }
-        public string Ordinal { get; set; }
-        public List<string> Scripts { get; set; }
+        public required string Name { get; set; }
+        public required string Directory { get; set; }
+        public required string Ordinal { get; set; }
+        public required List<string> Scripts { get; set; }
     }
 
     public class ProjectDetails
     {
-        public string Version { get; set; }
-        public PatchInfo Patch { get; set; }
+        public required string Version { get; set; }
+        public required PatchInfo Patch { get; set; }
     }
 
     public static void UpdateVersion(string filePath, string releaseType)
     {
         var jsonContent = File.ReadAllText(filePath);
-        var projectDetails = JsonSerializer.Deserialize<ProjectDetails>(jsonContent);
+        var projectDetails = JsonSerializer.Deserialize<ProjectDetails>(jsonContent) 
+            ?? throw new InvalidOperationException("Failed to deserialize JSON file");
 
         var version = projectDetails.Version.Split('.');
         if (version.Length != 3)

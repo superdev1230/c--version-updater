@@ -6,7 +6,7 @@ using System.Text.Json;
 [TestClass]
 public class VersionManagerTests
 {
-    private string testFilePath;
+    private string testFilePath = string.Empty;
 
     [TestInitialize]
     public void Setup()
@@ -24,13 +24,6 @@ public class VersionManagerTests
         File.WriteAllText(testFilePath, initialJson);
     }
 
-    [TestCleanup]
-    public void Cleanup()
-    {
-        if (File.Exists(testFilePath))
-            File.Delete(testFilePath);
-    }
-
     [TestMethod]
     public void UpdateVersion_MinorRelease_IncrementsMinorResetsPath()
     {
@@ -39,7 +32,8 @@ public class VersionManagerTests
 
         // Assert
         var updatedJson = File.ReadAllText(testFilePath);
-        var projectDetails = JsonSerializer.Deserialize<VersionManager.ProjectDetails>(updatedJson);
+        var projectDetails = JsonSerializer.Deserialize<VersionManager.ProjectDetails>(updatedJson)
+            ?? throw new InvalidOperationException("Failed to deserialize JSON file");
         Assert.AreEqual("1.7.0", projectDetails.Version);
     }
 
@@ -51,7 +45,8 @@ public class VersionManagerTests
 
         // Assert
         var updatedJson = File.ReadAllText(testFilePath);
-        var projectDetails = JsonSerializer.Deserialize<VersionManager.ProjectDetails>(updatedJson);
+        var projectDetails = JsonSerializer.Deserialize<VersionManager.ProjectDetails>(updatedJson)
+            ?? throw new InvalidOperationException("Failed to deserialize JSON file");
         Assert.AreEqual("1.6.24", projectDetails.Version);
     }
 
